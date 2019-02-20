@@ -25,6 +25,7 @@ class AddPhoto extends Component {
     this.state = {
       modal: false,
       text: "",
+      initialText: 'INitial text values'
       // editorState: EditorState.createEmpty()
     };
   }
@@ -309,7 +310,7 @@ class AddPhoto extends Component {
                 />
               </div>
             </div> */}
-            <TextEditor getEditorValue={this.getEditorValue} />
+            <TextEditor initialText={this.state.initialText} getEditorValue={this.getEditorValue} />
       
       </div>
     );

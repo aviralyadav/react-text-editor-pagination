@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import {Editor, EditorState, RichUtils, getDefaultKeyBinding} from 'draft-js';
+import {Editor, EditorState, RichUtils, getDefaultKeyBinding, convertFromHTML, ContentState} from 'draft-js';
 import './rich.css';
 
 class TextEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          text: "",
-          editorState: EditorState.createEmpty()
+          editorState: EditorState.createWithContent(
+            ContentState.createFromBlockArray(
+              convertFromHTML(this.props.initialText)
+            )
+          ),
         };
         this.focus = () => this.refs.editor.focus();
        
@@ -62,6 +65,7 @@ class TextEditor extends Component {
       }
     render() {
         const {editorState} = this.state;
+        console.log(this.state);
           // If the user changes block type before entering any text, we can
           // either style the placeholder or hide it. Let's just hide it now.
           let className = 'RichEditor-editor';
@@ -92,6 +96,7 @@ class TextEditor extends Component {
                   placeholder="Tell a story..."
                   ref="editor"
                   spellCheck={true}
+                  defaultEditorState={'helllllllllllllo'}
                 />
               </div>
             </div>
