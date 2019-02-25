@@ -5,6 +5,7 @@ import './rich.css';
 class TextEditor extends Component {
     constructor(props) {
         super(props);
+//         this.state = {editorState: EditorState.createEmpty()};
         this.state = {
           editorState: EditorState.createWithContent(
             ContentState.createFromBlockArray(
