@@ -14,10 +14,12 @@ import {
 } from "reactstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import log4javascript from 'log4javascript';
+import Pagination from "react-js-pagination";
+
+import log4javascript from "log4javascript";
 // import {Editor, EditorState, RichUtils, getDefaultKeyBinding} from 'draft-js';
-import './rich.css';
-import TextEditor from './text_editor';
+import "./rich.css";
+import TextEditor from "./text_editor";
 
 class AddPhoto extends Component {
   constructor(props) {
@@ -25,33 +27,32 @@ class AddPhoto extends Component {
     this.state = {
       modal: false,
       text: "",
-      initialText: 'INitial text values'
+      initialText: "INitial text values",
+      posts: [],
+      activePage: 1,
+      itemPerPage: 5,
+      duplicateList: [],
       // editorState: EditorState.createEmpty()
     };
   }
-  getEditorValue = (param) => {
-    this.setState({text: param});
-  // console.log(this.refs.editor.editor.innerHTML);
-  console.log(param);
-};
-  
-  componentDidMount() {
-    // this.focusEditor();
-    //axios.get()
-    // window.myLogger = log4javascript.getLogger();
-    // var ajaxAppender = new log4javascript.AjaxAppender("/api/logger");
-    // ajaxAppender.setBatchSize(10); // send in batches of 10
-    // ajaxAppender.setSendAllOnUnload(); // send all remaining messages on window.beforeunload()
-    // window.myLogger.addAppender(ajaxAppender);
+  getEditorValue = param => {
+    this.setState({ text: param });
+    // console.log(this.refs.editor.editor.innerHTML);
+    console.log(param);
+  };
+  handlePageChange = (pageNumber) => {
+    console.log(`active page is ${pageNumber}`);
+    this.setState({activePage: pageNumber});
+  }
 
-    //report all user console errors
-    // window.onerror = function(message, url, lineNumber) {
-    //   var errorMsg =
-    //     "Console error- " + url + " : " + lineNumber + ": " + message;
-    //   window.myLogger.error(errorMsg);
-    //   console.log(errorMsg)
-    //   return true;
-    // };
+
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+        this.setState({ posts: json, duplicateList: json });
+      });
   }
   toggle = () => {
     this.setState({
@@ -72,6 +73,11 @@ class AddPhoto extends Component {
   };
   render() {
     console.log(this.state);
+    const { posts, activePage, itemPerPage } = this.state;
+
+    const indexOfLastTodo = activePage * itemPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - itemPerPage;
+    const renderedPosts = posts.slice(indexOfFirstTodo, indexOfLastTodo);
     return (
       <div>
         <div className="form">
@@ -86,10 +92,7 @@ class AddPhoto extends Component {
             />
             <button>Post</button> */}
           </form>
-         
         </div>
-
-        
 
         <Button color="danger" onClick={this.toggle}>
           {"Modal"}
@@ -310,8 +313,27 @@ class AddPhoto extends Component {
                 />
               </div>
             </div> */}
-            <TextEditor initialText={this.state.initialText} getEditorValue={this.getEditorValue} />
-      
+        <TextEditor
+          initialText={this.state.initialText}
+          getEditorValue={this.getEditorValue}
+        />
+      {
+        renderedPosts && renderedPosts.map(post => {
+          return (<div>
+            <div>Title: {post.title}</div>
+            <div>Body: {post.body}</div><br/>
+          </div>)
+        })
+      }
+      <div>
+      <Pagination
+          activePage={this.state.activePage}
+          itemsCountPerPage={this.state.itemPerPage}
+          totalItemsCount={this.state.duplicateList.length}
+          pageRangeDisplayed={10}
+          onChange={this.handlePageChange}
+        />
+        </div>
       </div>
     );
   }
@@ -319,8 +341,8 @@ class AddPhoto extends Component {
 
 const styles = {
   editor: {
-    border: '1px solid gray',
-    minHeight: '6em'
+    border: "1px solid gray",
+    minHeight: "6em"
   }
 };
 
