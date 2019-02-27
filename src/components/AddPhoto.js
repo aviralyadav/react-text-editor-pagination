@@ -15,6 +15,10 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Pagination from "react-js-pagination";
+import "react-datetime/css/react-datetime.css";
+import DateTime from "react-datetime";
+import DateTimePicker from 'react-datetime-picker';
+
 
 import log4javascript from "log4javascript";
 // import {Editor, EditorState, RichUtils, getDefaultKeyBinding} from 'draft-js';
@@ -32,19 +36,29 @@ class AddPhoto extends Component {
       activePage: 1,
       itemPerPage: 5,
       duplicateList: [],
+      selectedDate: "28-02-2019",
+      selectedTime: "",
+      date: new Date()
       // editorState: EditorState.createEmpty()
     };
   }
+  onChangeNewPicker = date => this.setState({ date })
   getEditorValue = param => {
     this.setState({ text: param });
     // console.log(this.refs.editor.editor.innerHTML);
     console.log(param);
   };
-  handlePageChange = (pageNumber) => {
+  handlePageChange = pageNumber => {
     console.log(`active page is ${pageNumber}`);
-    this.setState({activePage: pageNumber});
-  }
+    this.setState({ activePage: pageNumber });
+  };
+  changeDate = selectedDate => {
+    this.setState({ selectedDate });
+  };
 
+  changeTime = selectedTime => {
+    this.setState({ selectedTime });
+  };
 
   componentDidMount() {
     fetch("https://jsonplaceholder.typicode.com/posts")
@@ -84,6 +98,45 @@ class AddPhoto extends Component {
           <form onSubmit={this.onSubmit}>
             <input type="text" placeholder="Link" name="link" />
             <input type="text" placeholder="Description" name="desc" />
+            <input
+              type="date"
+              placeholder="Date"
+              name="date"
+              data-date=""
+              data-date-format="DD MMMM YYYY"
+            />
+            {/* <DateTimePicker
+          onChange={this.onChangeNewPicker}
+          value={this.state.date}
+        /> */}
+            <DateTime
+              // viewMode="time"
+              // value={this.state.selectedTime}
+              // timeFormat="HH:mm A"
+              // dateFormat={false}
+              // closeOnSelect={true}
+              // inputProps={{ placeholder: "N/A", disabled: false }}
+              // // isValidDate={current => current.isBefore(DateTime.moment().startOf('year'))}
+              // onChange={this.changeTime}
+              defaultValue={new Date()}
+          onChange={console.log}
+              viewMode={'days'}
+    dateFormat={false}
+    timeFormat={'HH:mm A'}
+    input= {true}
+    utc={false}
+    closeOnSelect={false}
+    closeOnTab={true}
+            />
+            <DateTime
+              // viewMode='months'
+              value={this.state.selectedDate}
+              dateFormat="DD-MM-YYYY"
+              timeFormat={false}
+              closeOnSelect={true}
+              // isValidDate={current => current.isBefore(DateTime.moment().startOf('year'))}
+              onChange={this.changeDate}
+            />
             {/* <ReactQuill
               value={this.state.text}
               modules={AddPhoto.modules}
@@ -317,22 +370,24 @@ class AddPhoto extends Component {
           initialText={this.state.initialText}
           getEditorValue={this.getEditorValue}
         />
-      {
-        renderedPosts && renderedPosts.map(post => {
-          return (<div>
-            <div>Title: {post.title}</div>
-            <div>Body: {post.body}</div><br/>
-          </div>)
-        })
-      }
-      <div>
-      <Pagination
-          activePage={this.state.activePage}
-          itemsCountPerPage={this.state.itemPerPage}
-          totalItemsCount={this.state.duplicateList.length}
-          pageRangeDisplayed={10}
-          onChange={this.handlePageChange}
-        />
+        {renderedPosts &&
+          renderedPosts.map(post => {
+            return (
+              <div>
+                <div>Title: {post.title}</div>
+                <div>Body: {post.body}</div>
+                <br />
+              </div>
+            );
+          })}
+        <div>
+          <Pagination
+            activePage={this.state.activePage}
+            itemsCountPerPage={this.state.itemPerPage}
+            totalItemsCount={this.state.duplicateList.length}
+            pageRangeDisplayed={10}
+            onChange={this.handlePageChange}
+          />
         </div>
       </div>
     );
